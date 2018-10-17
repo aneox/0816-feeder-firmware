@@ -107,6 +107,7 @@ class FeederClass {
 	String reportFeederErrorState();
 	bool feederIsOk();
 
+	void detach();
 	void enable();
 	void disable();
 

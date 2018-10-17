@@ -49,11 +49,12 @@ void FeederClass::outputCurrentSettings() {
 }
 
 void FeederClass::setup() {
-	//attach servo to pin
-	this->servo.attach(feederPinMap[this->feederNo],this->feederSettings.motor_min_pulsewidth,this->feederSettings.motor_max_pulsewidth);
 
 	//load settings from eeprom
 	this->loadFeederSettings();
+
+	//attach servo to pin
+	this->servo.attach(feederPinMap[this->feederNo],this->feederSettings.motor_min_pulsewidth,this->feederSettings.motor_max_pulsewidth);
 
 	//feedback input
 	//microswitch is active low (NO connected to feedback-pin)
@@ -111,8 +112,8 @@ void FeederClass::factoryReset() {
 
 
 void FeederClass::gotoPostPickPosition() {
-  if(this->feederPosition==sAT_FULL_ADVANCED_POSITION) {
-    this->gotoRetractPosition();
+	 if(this->feederPosition==sAT_FULL_ADVANCED_POSITION) {
+	    this->gotoRetractPosition();
     #ifdef DEBUG
       Serial.println("gotoPostPickPosition retracted feeder");
     #endif
@@ -125,6 +126,8 @@ void FeederClass::gotoPostPickPosition() {
 }
 
 void FeederClass::gotoRetractPosition() {
+	if (!this->servo.attached())
+		this->servo.attach(feederPinMap[this->feederNo],this->feederSettings.motor_min_pulsewidth,this->feederSettings.motor_max_pulsewidth);
 	this->servo.write(this->feederSettings.retract_angle);
 	this->feederPosition=sAT_RETRACT_POSITION;
 	this->feederState=sMOVING;
@@ -134,6 +137,8 @@ void FeederClass::gotoRetractPosition() {
 }
 
 void FeederClass::gotoHalfAdvancedPosition() {
+	if (!this->servo.attached())
+		this->servo.attach(feederPinMap[this->feederNo],this->feederSettings.motor_min_pulsewidth,this->feederSettings.motor_max_pulsewidth);
 	this->servo.write(this->feederSettings.half_advanced_angle);
 	this->feederPosition=sAT_HALF_ADVANCED_POSITION;
 	this->feederState=sMOVING;
@@ -143,6 +148,8 @@ void FeederClass::gotoHalfAdvancedPosition() {
 }
 
 void FeederClass::gotoFullAdvancedPosition() {
+	if (!this->servo.attached())
+		this->servo.attach(feederPinMap[this->feederNo],this->feederSettings.motor_min_pulsewidth,this->feederSettings.motor_max_pulsewidth);
 	this->servo.write(this->feederSettings.full_advanced_angle);
 	this->feederPosition=sAT_FULL_ADVANCED_POSITION;
 	this->feederState=sMOVING;
@@ -154,6 +161,8 @@ void FeederClass::gotoFullAdvancedPosition() {
 
 void FeederClass::gotoAngle(uint8_t angle) {
 	
+	if (!this->servo.attached())
+		this->servo.attach(feederPinMap[this->feederNo],this->feederSettings.motor_min_pulsewidth,this->feederSettings.motor_max_pulsewidth);
 	this->servo.write(angle);
 	
 	#ifdef DEBUG
@@ -288,10 +297,15 @@ void FeederClass::enable() {
 	
 }
 
+void FeederClass::detach() {
+	this->servo.detach();
+}
+
 //called when M-Code to disable feeder is issued
 void FeederClass::disable() {
   
   this->feederState=sDISABLED;
+  this->servo.detach();
 }
 
 void FeederClass::update() {
@@ -375,16 +389,21 @@ void FeederClass::update() {
 		if(this->feederState==sADVANCING_CYCLE_COMPLETED) {
 			Serial.println("ok, advancing cycle completed");
 			this->feederState=sIDLE;
+			this->servo.detach();
 		}
 
 		//if no need for feeding exit fast.
 		if(this->remainingFeedLength==0) {
 			
-			if(this->feederState!=sDISABLED)
+			if(this->feederState!=sDISABLED) {
 				//if feeder are not disabled:
 				//make sure sIDLE is entered always again (needed if gotoXXXPosition functions are called directly instead by advance() which would set a remainingFeedLength)
+				if (this->feederState == sMOVING) {
+					this->servo.detach();
+				}
+
 				this->feederState=sIDLE;
-				
+			}
 			return;
 		} else {
 			this->feederState=sMOVING;

@@ -4,7 +4,7 @@
 #define NUMBER_OF_FEEDER 48
 #define NO_ENABLE_PIN
 #define NO_FEEDBACKLINES
-#define NO_ANALOG_IN
+#define HAS_ANALOG_IN
 #define NO_POWER_OUTPUTS
 
 
@@ -13,7 +13,8 @@
 * feederPinMap: Map IO-pins to specific feeder. First feeder is at index 0 (N0). Last feeder is NUMBER_OF_FEEDER-1
 */
 const static uint8_t feederPinMap[NUMBER_OF_FEEDER] = {
-  7,6,5,4,    // Feeder N0...N3
+  11,10,9,8,
+  7,6,5,4,
   22,23,24,25,
   26,27,28,29,
   30,31,32,33,
@@ -21,7 +22,6 @@ const static uint8_t feederPinMap[NUMBER_OF_FEEDER] = {
   38,39,40,41,
   42,43,44,45,
   46,47,48,49,
-  A0,A1,A2,A3,
   A4,A5,A6,A7,
   A8,A9,A10,A11,
   A12,A13,A14,A15,

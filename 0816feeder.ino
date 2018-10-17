@@ -41,7 +41,7 @@ struct sCommonSettings {
 
 	char version[4];   // This is for detection if settings suit to struct, if not, eeprom is reset to defaults
 #ifdef HAS_ANALOG_IN
-	float adc_scaling_values[8][2];
+	float adc_scaling_values[2][2];
 #endif
 };
 sCommonSettings commonSettings_default = {
@@ -54,12 +54,6 @@ sCommonSettings commonSettings_default = {
 	{
 		{ANALOG_A0_SCALING_FACTOR,ANALOG_A0_OFFSET},
 		{ANALOG_A1_SCALING_FACTOR,ANALOG_A1_OFFSET},
-		{ANALOG_A2_SCALING_FACTOR,ANALOG_A2_OFFSET},
-		{ANALOG_A3_SCALING_FACTOR,ANALOG_A3_OFFSET},
-		{ANALOG_A4_SCALING_FACTOR,ANALOG_A4_OFFSET},
-		{ANALOG_A5_SCALING_FACTOR,ANALOG_A5_OFFSET},
-		{ANALOG_A6_SCALING_FACTOR,ANALOG_A6_OFFSET},
-		{ANALOG_A7_SCALING_FACTOR,ANALOG_A7_OFFSET},
 	},
 #endif
 };
@@ -83,7 +77,7 @@ enum eFeederCommands {
 	cmdOutputCurrentSettings,
 	cmdInitializeFeederWithId,
 	cmdFactoryReset,
-
+	cmdDetach,
 };
 void executeCommandOnAllFeeder(eFeederCommands command);
 void executeCommandOnAllFeeder(eFeederCommands command) {
@@ -110,6 +104,9 @@ void executeCommandOnAllFeeder(eFeederCommands command) {
 			case cmdFactoryReset:
 				feeders[i].factoryReset();
 			break;
+			case cmdDetach:
+				feeders[i].detach();
+			break;
 			default:
 				{}
 			break;
@@ -120,9 +117,9 @@ void executeCommandOnAllFeeder(eFeederCommands command) {
 #ifdef HAS_ANALOG_IN
 void updateADCvalues() {
 
-	for(uint8_t i=0; i<=7; i++) {
-		adcRawValues[i]=analogRead(i);
-		adcScaledValues[i]=(adcRawValues[i]*commonSettings.adc_scaling_values[i][0])+commonSettings.adc_scaling_values[i][1];
+	for(uint8_t i=0; i<=1; i++) {
+		adcRawValues[i] = analogRead(i);
+		adcScaledValues[i]=(adcRawValues[i] * commonSettings.adc_scaling_values[i][0]) + commonSettings.adc_scaling_values[i][1];
 	}
 }
 #endif
@@ -132,7 +129,7 @@ void printCommonSettings() {
 	//ADC-scaling values
 #ifdef HAS_ANALOG_IN
 	Serial.println("Analog Scaling Settings:");
-	for(uint8_t i=0; i<=7; i++) {
+	for(uint8_t i=0; i<=1; i++) {
 		Serial.print("M");
 		Serial.print(MCODE_SET_SCALING);
 		Serial.print(" A");
@@ -195,6 +192,7 @@ void setup() {
 	
 	//print all settings of every feeder to console
 	executeCommandOnAllFeeder(cmdOutputCurrentSettings);
+	executeCommandOnAllFeeder(cmdDetach);
 
 	//init adc-values
 #ifdef HAS_ANALOG_IN

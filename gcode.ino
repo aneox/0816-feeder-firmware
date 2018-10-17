@@ -134,7 +134,7 @@ void processCommand() {
 			feedLength = (uint8_t)parseParameter('F',feeders[(uint8_t)signedFeederNo].feederSettings.feed_length);
 
 
-			if ( ((feedLength%2) != 0) || feedLength>24 ) {
+			if ( ((feedLength%2) != 0) || feedLength>124 ) {
 				//advancing is only possible for multiples of 2mm and 24mm max
 				sendAnswer(1,F("Invalid feedLength"));
 				break;
@@ -254,6 +254,9 @@ void processCommand() {
 
 			//save to eeprom
 			feeders[(uint8_t)signedFeederNo].saveFeederSettings();
+
+			//reattach with new settings
+			feeders[(uint8_t)signedFeederNo].setup();
 
 			//confirm
 			sendAnswer(0,F("Feeders config updated."));

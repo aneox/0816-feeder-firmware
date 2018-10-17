@@ -8,13 +8,13 @@
 */
 // prints some extra information via serial
 // uncomment to disable in production
-//#define DEBUG
+// #define DEBUG
 
 /*
 *  Select controller shield
 */
 // defaults to the native shield, optional sensor shield can be selected
-#define CONTROLLER_SHIELD SHIELD_NATIVE     //SHIELD_NATIVE or SHIELD_SENSOR
+#define CONTROLLER_SHIELD SHIELD_SENSOR     //SHIELD_NATIVE or SHIELD_SENSOR
 //change config_version, if change shield!
 
 
@@ -22,7 +22,7 @@
 *  EEPROM-Settings
 */
 //change to something other unique if structure of data to be saved in eeprom changed (max 3 chars)
-#define CONFIG_VERSION "aab"
+#define CONFIG_VERSION "aaf"
 
 /*
 *  Serial
@@ -126,28 +126,10 @@
 #define ADC_READ_EVERY_MS 20
 
 // Scaling Factors to convert raw ADC value to real units.
-#define ANALOG_A0_SCALING_FACTOR 0.1277			//preset for NXP vacuum sensor, formula pressure [kPa]=(ADCval/1023-0.92)/0.007652
-#define ANALOG_A0_OFFSET -120.23
-#define ANALOG_A1_SCALING_FACTOR 0.1277			//preset for NXP vacuum sensor, formula pressure [kPa]=(ADCval/1023-0.92)/0.007652
-#define ANALOG_A1_OFFSET -120.23
-#define ANALOG_A2_SCALING_FACTOR 1
-#define ANALOG_A2_OFFSET 0
-#define ANALOG_A3_SCALING_FACTOR 1
-#define ANALOG_A3_OFFSET 0
-#define ANALOG_A4_SCALING_FACTOR 1
-#define ANALOG_A4_OFFSET 0
-#define ANALOG_A5_SCALING_FACTOR 1
-#define ANALOG_A5_OFFSET 0
-#define ANALOG_A6_SCALING_FACTOR 1
-#define ANALOG_A6_OFFSET 0
-#define ANALOG_A7_SCALING_FACTOR 1
-#define ANALOG_A7_OFFSET 0
-
-
-
-
-
-
+#define ANALOG_A0_SCALING_FACTOR 0.2955			//preset for NXP vacuum sensor, formula pressure [kPa]=(ADCval/1023-0.92)/0.007652
+#define ANALOG_A0_OFFSET 0
+#define ANALOG_A1_SCALING_FACTOR 0.2955			//preset for NXP vacuum sensor, formula pressure [kPa]=(ADCval/1023-0.92)/0.007652
+#define ANALOG_A1_OFFSET 0
 
 // ------------------------------------------------------
 //
